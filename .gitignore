@@ -24,3 +24,6 @@ storage/index/*
 # OS
 .DS_Store
 Thumbs.db
+# Artifacts & runtime outputs
+artifacts/
+storage/
