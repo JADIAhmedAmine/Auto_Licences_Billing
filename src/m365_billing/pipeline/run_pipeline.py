@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 import structlog
@@ -32,7 +32,9 @@ def read_input(path: Path, required_cols: list[str]) -> pd.DataFrame:
     df["Client_ID"] = df["Client_ID"].astype(str).str.strip()
     df["Subscription_ID"] = df["Subscription_ID"].astype(str).str.strip()
     df["SKU_Name"] = df["SKU_Name"].astype(str).str.strip()
-    df["Quantity_Month_N"] = pd.to_numeric(df["Quantity_Month_N"], errors="coerce").fillna(0).astype(int)
+    df["Quantity_Month_N"] = (
+        pd.to_numeric(df["Quantity_Month_N"], errors="coerce").fillna(0).astype(int)
+    )
     return df
 
 
@@ -42,7 +44,7 @@ def run_pipeline(
     dry_run: bool,
     execution_id: str | None = None,
     no_odoo: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     env = EnvSettings()
     cfg = load_config()
     execution_id = execution_id or f"exec_{uuid.uuid4().hex[:8]}_{period}"
@@ -50,14 +52,23 @@ def run_pipeline(
     storage_root = Path(env.storage_root)
     store = ParquetHistoryStore(storage_root=storage_root)
 
-    log.info("start", execution_id=execution_id, period=period, input=str(input_path), dry_run=dry_run, no_odoo=no_odoo)
+    log.info(
+        "start",
+        execution_id=execution_id,
+        period=period,
+        input=str(input_path),
+        dry_run=dry_run,
+        no_odoo=no_odoo,
+    )
 
     df = read_input(input_path, cfg.io.required_columns)
 
     # Odoo mapping index (optional)
     sol_index: dict[str, dict] = {}
     if not no_odoo:
-        odoo = OdooRPC(url=env.odoo_url, db=env.odoo_db, user=env.odoo_user, password=env.odoo_password)
+        odoo = OdooRPC(
+            url=env.odoo_url, db=env.odoo_db, user=env.odoo_user, password=env.odoo_password
+        )
         domain = cfg.raw_base.get("odoo", {}).get("domain_active_sol", [])
         fields = ["id", cfg.app.join_field, cfg.app.qty_field, "product_id", "order_partner_id"]
         sol_rows = odoo.search_read(cfg.app.odoo_model, domain=domain, fields=fields)
@@ -115,7 +126,11 @@ def run_pipeline(
                 cfg.app.audit_status_field: status,
                 cfg.app.audit_log_field: json.dumps(
                     {
-                        "context": {"source": cfg.app.source, "period": period, "execution_id": execution_id},
+                        "context": {
+                            "source": cfg.app.source,
+                            "period": period,
+                            "execution_id": execution_id,
+                        },
                         "audit_ia": audit,
                     },
                     ensure_ascii=False,

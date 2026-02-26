@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 
-def _pct_change(new: int, prev: Optional[int]) -> float:
+def _pct_change(new: int, prev: int | None) -> float:
     if prev is None:
         return 0.0
     if prev == 0:
@@ -11,7 +11,9 @@ def _pct_change(new: int, prev: Optional[int]) -> float:
     return abs(new - prev) / abs(prev)
 
 
-def drift_audit(qty_new: int, qty_prev: Optional[int], warn_thr: float, crit_thr: float) -> Dict[str, Any]:
+def drift_audit(
+    qty_new: int, qty_prev: int | None, warn_thr: float, crit_thr: float
+) -> dict[str, Any]:
     pct = _pct_change(qty_new, qty_prev)
 
     if qty_prev is None:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
+from typing import Annotated
 
 import typer
 
@@ -13,12 +13,19 @@ app = typer.Typer(help="M365 Usage Billing middleware (ingestion + audit + Odoo 
 
 @app.callback(invoke_without_command=True)
 def main(
-    input_path: Path = typer.Option(..., "--input", "-i", exists=True, readable=True),
-    period: str = typer.Option(..., "--period", "-p", help="YYYY-MM (ex: 2025-10)"),
-    dry_run: bool = typer.Option(False, "--dry-run", help="No writes to Odoo"),
-    no_odoo: bool = typer.Option(False, "--no-odoo", help="Test local: skip Odoo mapping/write"),
-    execution_id: Optional[str] = typer.Option(None, "--execution-id"),
-):
+    input_path: Annotated[
+        Path,
+        typer.Option("--input", "-i", exists=True, readable=True, help="Input CSV/XLSX path"),
+    ],
+    period: Annotated[str, typer.Option("--period", "-p", help="YYYY-MM (ex: 2025-10)")],
+    dry_run: Annotated[bool, typer.Option("--dry-run", help="No writes to Odoo")] = False,
+    no_odoo: Annotated[
+        bool, typer.Option("--no-odoo", help="Test local: skip Odoo mapping/write")
+    ] = False,
+    execution_id: Annotated[
+        str | None, typer.Option("--execution-id", help="Override run id")
+    ] = None,
+) -> None:
     setup_logging()
     res = run_pipeline(
         input_path=input_path,
@@ -29,7 +36,9 @@ def main(
     )
 
     typer.echo(f"execution_id={res['execution_id']}")
-    typer.echo(f"treated={res['treated']} ok={res['ok']} warning={res['warning']} critical={res['critical']}")
+    typer.echo(
+        f"treated={res['treated']} ok={res['ok']} warning={res['warning']} critical={res['critical']}"
+    )
     typer.echo(f"mapping_errors={res['mapping_errors']} write_errors={res['write_errors']}")
     if res.get("report_path"):
         typer.echo(f"report={res['report_path']}")

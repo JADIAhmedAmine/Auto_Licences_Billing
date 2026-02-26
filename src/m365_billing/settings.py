@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import yaml
 from pydantic import BaseModel
@@ -23,7 +23,7 @@ class EnvSettings(BaseSettings):
     config_thresholds: str = "./configs/thresholds.yaml"
 
 
-def _load_yaml(path: Path) -> Dict[str, Any]:
+def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(f"Config file not found: {path}")
     with path.open("r", encoding="utf-8") as f:
@@ -40,7 +40,7 @@ class AppConfig(BaseModel):
 
 
 class IOConfig(BaseModel):
-    required_columns: List[str]
+    required_columns: list[str]
 
 
 class DriftConfig(BaseModel):
@@ -52,8 +52,8 @@ class ConfigBundle(BaseModel):
     app: AppConfig
     io: IOConfig
     drift: DriftConfig
-    raw_base: Dict[str, Any]
-    raw_thresholds: Dict[str, Any]
+    raw_base: dict[str, Any]
+    raw_thresholds: dict[str, Any]
 
 
 def load_config() -> ConfigBundle:

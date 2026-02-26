@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
-import joblib
 
 
 def make_synth(n_subs: int = 500, seed: int = 42) -> pd.DataFrame:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -17,7 +16,7 @@ class ParquetHistoryStore:
         self.parquet_root.mkdir(parents=True, exist_ok=True)
         self.index_root.mkdir(parents=True, exist_ok=True)
         self.latest_path = self.index_root / "latest.parquet"
-        self._latest_df: Optional[pd.DataFrame] = None
+        self._latest_df: pd.DataFrame | None = None
 
     def _latest(self) -> pd.DataFrame:
         if self._latest_df is not None:
@@ -28,7 +27,7 @@ class ParquetHistoryStore:
             self._latest_df = pd.DataFrame(columns=["subscription_id", "last_period", "last_qty"])
         return self._latest_df
 
-    def get_last_qty(self, subscription_id: str) -> Optional[int]:
+    def get_last_qty(self, subscription_id: str) -> int | None:
         df = self._latest()
         m = df[df["subscription_id"] == subscription_id]
         if m.empty:
@@ -48,14 +47,18 @@ class ParquetHistoryStore:
         part_dir.mkdir(parents=True, exist_ok=True)
         path = part_dir / "usage.parquet"
 
-        row = pd.DataFrame([{
-            "period": period,
-            "client_id": client_id,
-            "subscription_id": subscription_id,
-            "sku": sku,
-            "qty": int(qty),
-            "execution_id": execution_id,
-        }])
+        row = pd.DataFrame(
+            [
+                {
+                    "period": period,
+                    "client_id": client_id,
+                    "subscription_id": subscription_id,
+                    "sku": sku,
+                    "qty": int(qty),
+                    "execution_id": execution_id,
+                }
+            ]
+        )
 
         if path.exists():
             old = pd.read_parquet(path)
@@ -68,11 +71,18 @@ class ParquetHistoryStore:
         latest = self._latest()
         latest = latest[latest["subscription_id"] != subscription_id]
         latest = pd.concat(
-            [latest, pd.DataFrame([{
-                "subscription_id": subscription_id,
-                "last_period": period,
-                "last_qty": int(qty),
-            }])],
+            [
+                latest,
+                pd.DataFrame(
+                    [
+                        {
+                            "subscription_id": subscription_id,
+                            "last_period": period,
+                            "last_qty": int(qty),
+                        }
+                    ]
+                ),
+            ],
             ignore_index=True,
         )
         self._latest_df = latest
