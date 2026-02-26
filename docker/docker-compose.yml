@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../storage:/app/storage
+      - ../artifacts:/app/artifacts
+      - ../configs:/app/configs
+    env_file:
+      - ../.env

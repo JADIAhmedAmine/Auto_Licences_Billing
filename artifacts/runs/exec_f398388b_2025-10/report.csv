@@ -1,0 +1,3 @@
+period,client_id,subscription_id,sku,qty_new,qty_prev,status,anomaly_score,reason,sol_id
+2025-10,1792,MS-365-99821,O365_BUSINESS_PREMIUM,850,850,ok,0.05,Consommation stable,
+2025-10,1792,MS-365-44120,O365_E3,45,45,ok,0.05,Consommation stable,

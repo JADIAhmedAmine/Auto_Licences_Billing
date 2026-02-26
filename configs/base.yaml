@@ -1,0 +1,15 @@
+app:
+  source: "M365_Usage_Importer_v1"
+  odoo_model: "sale.order.line"
+  join_field: "x_microsoft_sub_id"
+  qty_field: "qty_delivered"
+  audit_log_field: "x_ia_audit_log"
+  audit_status_field: "x_ia_status"
+
+io:
+  required_columns: ["Client_ID", "Subscription_ID", "SKU_Name", "Quantity_Month_N"]
+
+odoo:
+  domain_active_sol:
+    - ["x_microsoft_sub_id", "!=", false]
+    - ["state", "in", ["sale", "done"]]
