@@ -5,6 +5,9 @@ __pycache__/
 *.pyd
 *.egg-info/
 
+#arob
+arob.sh
+
 # Virtual env
 .venv/
 
