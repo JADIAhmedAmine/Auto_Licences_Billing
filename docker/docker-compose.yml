@@ -1,8 +1,10 @@
 services:
+
   api:
     build:
       context: ..
       dockerfile: docker/Dockerfile.api
+    container_name: m365-api
     ports:
       - "8000:8000"
     volumes:
@@ -11,3 +13,21 @@ services:
       - ../configs:/app/configs
     env_file:
       - ../.env
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: m365-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: m365-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
