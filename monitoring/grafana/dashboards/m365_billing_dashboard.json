@@ -1,0 +1,78 @@
+{
+  "uid": "m365-billing",
+  "title": "M365 Billing - MLOps Monitoring",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Pipeline Runs (total)",
+      "id": 1,
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "sum(pipeline_runs_total)", "refId": "A"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Mapping Errors (total)",
+      "id": 2,
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+      "targets": [
+        {"expr": "pipeline_mapping_errors_total", "refId": "A"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Write Errors (total)",
+      "id": 3,
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 0},
+      "targets": [
+        {"expr": "pipeline_write_errors_total", "refId": "A"}
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Critical Lines (total)",
+      "id": 4,
+      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 0},
+      "targets": [
+        {"expr": "pipeline_lines_treated_total{status=\"critical\"}", "refId": "A"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency (avg over 1m)",
+      "id": 5,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+      "targets": [
+        {
+          "expr": "rate(pipeline_latency_seconds_sum[1m]) / rate(pipeline_latency_seconds_count[1m])",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Runs per minute",
+      "id": 6,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+      "targets": [
+        {"expr": "rate(pipeline_runs_total[1m])", "refId": "A"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Lines by status (per minute)",
+      "id": 7,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 14},
+      "targets": [
+        {"expr": "rate(pipeline_lines_treated_total{status=\"ok\"}[1m])", "refId": "A"},
+        {"expr": "rate(pipeline_lines_treated_total{status=\"warning\"}[1m])", "refId": "B"},
+        {"expr": "rate(pipeline_lines_treated_total{status=\"critical\"}[1m])", "refId": "C"}
+      ]
+    }
+  ]
+}

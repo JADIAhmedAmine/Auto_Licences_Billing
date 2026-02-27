@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "M365 Billing"
+    orgId: 1
+    folder: "M365 Billing"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
