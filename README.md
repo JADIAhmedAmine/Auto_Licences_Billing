@@ -133,6 +133,10 @@ curl -X POST localhost:8000/audit -H "Content-Type: application/json" -d '{
 
 ## Observabilité
 
+![Tableau de bord Grafana — monitoring du pipeline M365 Billing](docs/screenshots/grafana_dashboard.png)
+
+*Tableau de bord Grafana (données de démonstration synthétiques) : exécutions du pipeline, erreurs de mapping/écriture, lignes critiques, latence et débit par statut.*
+
 - **Métriques Prometheus** exposées sur `/metrics` : `pipeline_runs_total`, `pipeline_lines_treated_total{status}`, `pipeline_mapping_errors_total`, `pipeline_write_errors_total`, `pipeline_latency_seconds`.
 - **Tableau de bord Grafana** prêt à l'emploi (`monitoring/grafana/dashboards/`), avec provisioning automatique de la datasource et du dashboard.
 - **Logs structurés** JSON via `structlog`.
