@@ -1,3 +1,8 @@
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
 # Python
 __pycache__/
 *.pyc
@@ -24,9 +29,7 @@ storage/index/*
 # OS
 .DS_Store
 Thumbs.db
-# Artifacts & runtime outputs
-artifacts/
-storage/
-# Artifacts & runtime outputs
-artifacts/
-storage/
+
+# Runtime outputs (committed samples stay tracked; new runs are ignored)
+artifacts/runs/
+artifacts/tmp/
